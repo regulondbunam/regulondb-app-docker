@@ -1,0 +1,6 @@
+[submodule "RegulonDB-Browser"]
+	path = RegulonDB-Browser
+	url = git@github.com:regulondbunam/RegulonDB-Browser.git
+[submodule "GraphQL-api"]
+	path = GraphQL-api
+	url = git@github.com:regulondbunam/GraphQL-api.git
