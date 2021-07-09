@@ -1,0 +1,2 @@
+mongorestore dump
+mongo admin --host localhost -u admin -p admin --eval "db.createUser({user: 'regulondbdatamarts', pwd: 'regulondbdatamarts', roles: [{role: 'readWrite', db: 'regulondbdatamarts'}, {role: 'dbAdmin', db: 'regulondbdatamarts'}]});"
