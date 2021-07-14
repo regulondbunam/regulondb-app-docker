@@ -7,8 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
       target: proxy
+    image: regulondbapp-nginx
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - web
       - api
@@ -23,6 +24,7 @@ services:
       target: webapp
       args:
         API_URL: /graphql
+    image: regulondbapp-react
     ports:
       - "5000:5000"
     depends_on:
@@ -37,6 +39,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: graphql
+    image: regulondbapp-graphql
     env_file:
       - ./api-variables.env
     ports:
@@ -48,13 +51,14 @@ services:
 
   db:
     container_name: "regulondb-regulondb_app-mongodb"
-    image: mongo:latest
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-    volumes:
-      - "./MongoDB/init-db.d/seed.sh:/docker-entrypoint-initdb.d/mongorestore.sh"
-      - "./MongoDB/dump:/dump"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: mongo
+      args:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: admin
+    image: regulondbapp-mongo
     ports:
       - "27017:27017"
     networks:
