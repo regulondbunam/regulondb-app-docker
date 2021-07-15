@@ -55,9 +55,6 @@ services:
       context: .
       dockerfile: Dockerfile
       target: mongo
-      args:
-        MONGO_INITDB_ROOT_USERNAME: admin
-        MONGO_INITDB_ROOT_PASSWORD: admin
     image: regulondbapp-mongo
     ports:
       - "27017:27017"
