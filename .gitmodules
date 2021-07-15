@@ -1,7 +1,9 @@
 [submodule "RegulonDB-Browser"]
 	path = RegulonDB-Browser
 	url = git@github.com:regulondbunam/RegulonDB-Browser.git
+	ignore = dirty
 [submodule "GraphQL-api"]
 	path = GraphQL-api
 	url = git@github.com:regulondbunam/GraphQL-api.git
 	branch = development
+	ignore = dirty
