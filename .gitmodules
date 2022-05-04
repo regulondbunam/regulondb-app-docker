@@ -12,3 +12,7 @@
 	path = RegulonDBHT-API
 	url = https://github.com/regulondbunam/RegulonDBHT-API
 	ignore = dirty
+	
+[submodule "mongodb-datamarts"]
+	path = mongodb-datamarts
+	url = https://github.com/andresloal/mongodb-datamarts

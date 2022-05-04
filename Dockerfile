@@ -4,8 +4,14 @@ RUN mkdir -p /data/regulondbdatamarts \
     && echo "dbpath = /data/regulondbdatamarts" > /etc/mongodb.conf \
     && chown -R mongodb:mongodb /data/regulondbdatamarts
 
-COPY /MongoDB/dump /data/dump
+COPY /mongodb-datamarts/dump /data/dump
+
 RUN chmod -R 777 /data/dump
+
+RUN apt-get update \
+ && apt-get install -y unzip
+
+RUN unzip -q /data/dump/regulondbht/geneExpression.bson.zip -d /data/dump/regulondbht/
 
 RUN mongod --fork --logpath /var/log/mongodb.log --dbpath /data/regulondbdatamarts \
     && mongorestore /data/dump \
