@@ -12,7 +12,7 @@ services:
       - "80:80"
     depends_on:
       - web
-      - api
+      - datamartsApi
     networks:
       - regulondbapp
 
@@ -26,31 +26,48 @@ services:
         API_URL: /graphql
     image: regulondbapp-react
     ports:
-      - "5000:5000"
+      - "5000:3000"
     depends_on:
-      - api
+      - datamartsApi
       - db
     networks:
       - regulondbapp
 
-  api:
-    container_name: "regulondb-regulondb_app-graphql"
+  htApi:
+    container_name: "regulondb_app-graphql-ht"
     build:
       context: .
       dockerfile: Dockerfile
-      target: graphql
+      target: graphql-ht
+    image: regulondbapp-graphql-ht
+    env_file:
+      - ./ht-api-variables.env
+    ports:
+      - "4004:4004"
+    depends_on:
+      - db
+    networks:
+      - regulondbapp
+
+  datamartsApi:
+    container_name: "regulondb_app-graphql-dm"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: graphql-dm
     image: regulondbapp-graphql
     env_file:
       - ./api-variables.env
     ports:
       - "4000:4000"
     depends_on:
+      - htApi
       - db
     networks:
       - regulondbapp
 
   db:
-    container_name: "regulondb-regulondb_app-mongodb"
+    container_name: "regulondb_app-mongodb"
     build:
       context: .
       dockerfile: Dockerfile

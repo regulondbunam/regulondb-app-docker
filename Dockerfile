@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 mongo:4.4 as mongo
+FROM --platform=linux/amd64 mongo:5.0 as mongo
 
 RUN mkdir -p /data/regulondbdatamarts \
     && echo "dbpath = /data/regulondbdatamarts" > /etc/mongodb.conf \
@@ -9,7 +9,7 @@ RUN chmod -R 777 /data/dump
 
 RUN mongod --fork --logpath /var/log/mongodb.log --dbpath /data/regulondbdatamarts \
     && mongorestore /data/dump \
-    && mongo admin --eval "db.createUser({user: 'regulondbdatamarts', pwd: 'regulondbdatamarts', roles: [{role: 'readWrite', db: 'regulondbdatamarts'}, {role: 'dbAdmin', db: 'regulondbdatamarts'}]});" \
+    && mongo admin --eval "db.createUser({user: 'regulondbadmin', pwd: 'regulondb', roles: [{role: 'readWrite', db: 'regulondbdatamarts'}, {role: 'dbAdmin', db: 'regulondbdatamarts'}, {role: 'readWrite', db: 'regulondbht'}, {role: 'dbAdmin', db: 'regulondbht'}]});" \
     && mongod --dbpath /data/regulondbdatamarts --shutdown \
     && chown -R mongodb /data/regulondbdatamarts
 
@@ -18,9 +18,9 @@ VOLUME /data/regulondbdatamarts
 
 CMD ["mongod", "--config", "/etc/mongodb.conf"]
 
-FROM --platform=linux/amd64 node:15 as node
+FROM --platform=linux/amd64 node:16 as node
 
-FROM node as graphql
+FROM node as graphql-dm
 
 WORKDIR /app
 
@@ -31,7 +31,18 @@ RUN npm i
 
 COPY /GraphQL-api /app
 
-RUN npm run build
+ENTRYPOINT [ "npm", "start" ]
+
+FROM node as graphql-ht
+
+WORKDIR /app
+
+COPY /RegulonDBHT-API/package.json /app
+COPY /RegulonDBHT-API/package-lock.json /app
+
+RUN npm i
+
+COPY /RegulonDBHT-API /app
 
 ENTRYPOINT [ "npm", "start" ]
 
@@ -62,6 +73,7 @@ COPY --from=react-build-stage /RegulonDB-Browser/build ./build
 
 ENTRYPOINT ["serve", "-s", "build"]
 
+ENV NODE_OPTIONS=--max_old_space_size=4096
 
 FROM --platform=linux/amd64 nginx:stable-alpine as proxy
 
