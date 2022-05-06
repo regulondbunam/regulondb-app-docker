@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 mongo:5.0 as mongo
+FROM --platform=linux/amd64 mongo:4.4 as mongo
 
 RUN mkdir -p /data/regulondbdatamarts \
     && echo "dbpath = /data/regulondbdatamarts" > /etc/mongodb.conf \
@@ -56,6 +56,8 @@ FROM node as react-build-stage
 
 ARG API_URL
 
+ARG FLASK_URL
+
 WORKDIR /RegulonDB-Browser
 
 COPY /RegulonDB-Browser/package.json /RegulonDB-Browser/package.json
@@ -65,7 +67,9 @@ RUN npm install
 
 COPY /RegulonDB-Browser /RegulonDB-Browser
 
-RUN echo '{ "graphQlUrl": "'$API_URL'" }' > src/webServices/apollo.conf.json
+ENV REACT_APP_WEB_SERVICE_URL=$API_URL
+
+ENV REACT_APP_PROSSES_SERVICE=$FLASK_URL
 
 RUN npm run build
 
@@ -84,3 +88,36 @@ ENV NODE_OPTIONS=--max_old_space_size=4096
 FROM --platform=linux/amd64 nginx:stable-alpine as proxy
 
 COPY proxy/nginx.conf /etc/nginx/conf.d/default.conf
+
+FROM --platform=linux/amd64 ubuntu:18.04 as flask_app
+
+ARG API_URL
+
+RUN apt-get update \
+ && apt-get install -y python3.7 \
+ python3-pip
+
+RUN python3.7 -m pip install pip
+
+RUN apt-get update && \
+ apt-get install -y python3.distutils \
+ python3-setuptools
+
+RUN python3.7 -m pip install pip --upgrade pip
+
+RUN mkdir /app
+WORKDIR /app
+COPY regulonDB-wdpservice /app
+
+RUN pip3 install Flask \
+ && pip3 install pysftp \
+ && pip3 install flask-cors \
+ && pip3 install sgqlc \
+ && pip3 install python-dotenv \
+ && pip3 install pyopenssl
+
+ENV FLASK_APP='app.py'
+ENV FLASK_ENV=development
+ENV GQL_SERVICE='http://datamartsApi:4000/graphql'
+
+CMD flask run --host=0.0.0.0

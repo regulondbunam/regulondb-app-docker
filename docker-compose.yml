@@ -1,15 +1,29 @@
 version: "3"
 
 services:
+  flask:
+    container_name: "regulondb12_app-flask"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: flask_app
+      args:
+        API_URL: /graphql
+    image: regulondbapp-flask
+    depends_on:
+      - datamartsApi
+    networks:
+      - regulondbapp
+  
   proxy:
-    container_name: "regulondb-regulondb_app-nginx"
+    container_name: "regulondb12_app-nginx"
     build:
       context: .
       dockerfile: Dockerfile
       target: proxy
     image: regulondbapp-nginx
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - web
       - datamartsApi
@@ -17,24 +31,26 @@ services:
       - regulondbapp
 
   web:
-    container_name: "regulondb-regulondb_app-react"
+    container_name: "regulondb12_app-react"
     build:
       context: .
       dockerfile: Dockerfile
       target: webapp
       args:
         API_URL: /graphql
+        FLASK_URL: /wdps
     image: regulondbapp-react
     ports:
-      - "5000:3000"
+      - "3000:3000"
     depends_on:
       - datamartsApi
       - db
+      - flask
     networks:
       - regulondbapp
 
   htApi:
-    container_name: "regulondb_app-graphql-ht"
+    container_name: "regulondb12_app-graphql-ht"
     build:
       context: .
       dockerfile: Dockerfile
@@ -50,7 +66,7 @@ services:
       - regulondbapp
 
   datamartsApi:
-    container_name: "regulondb_app-graphql-dm"
+    container_name: "regulondb12_app-graphql-dm"
     build:
       context: .
       dockerfile: Dockerfile
@@ -67,7 +83,7 @@ services:
       - regulondbapp
 
   db:
-    container_name: "regulondb_app-mongodb"
+    container_name: "regulondb12_app-mongodb"
     build:
       context: .
       dockerfile: Dockerfile
