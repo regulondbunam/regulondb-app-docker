@@ -16,3 +16,6 @@
 [submodule "mongodb-datamarts"]
 	path = mongodb-datamarts
 	url = https://github.com/andresloal/mongodb-datamarts
+[submodule "regulonDB-wdpservice"]
+	path = regulonDB-wdpservice
+	url = https://github.com/galarcon-ccg/regulonDB-wdpservice
