@@ -23,7 +23,7 @@ services:
       target: proxy
     image: regulondbapp-nginx
     ports:
-      - "8080:80"
+      - "7000:80"
     depends_on:
       - web
       - datamartsApi
@@ -40,8 +40,6 @@ services:
         API_URL: /graphql
         FLASK_URL: /wdps
     image: regulondbapp-react
-    ports:
-      - "3000:3000"
     depends_on:
       - datamartsApi
       - db
@@ -58,8 +56,6 @@ services:
     image: regulondbapp-graphql-ht
     env_file:
       - ./ht-api-variables.env
-    ports:
-      - "4004:4004"
     depends_on:
       - db
     networks:
@@ -74,8 +70,6 @@ services:
     image: regulondbapp-graphql
     env_file:
       - ./api-variables.env
-    ports:
-      - "4000:4000"
     depends_on:
       - htApi
       - db
@@ -89,8 +83,6 @@ services:
       dockerfile: Dockerfile
       target: mongo
     image: regulondbapp-mongo
-    ports:
-      - "27017:27017"
     networks:
       - regulondbapp
 
