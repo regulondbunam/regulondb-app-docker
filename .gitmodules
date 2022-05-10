@@ -13,11 +13,6 @@
 	url = https://github.com/regulondbunam/RegulonDBHT-API
 	ignore = dirty
 
-[submodule "mongodb-datamarts"]
-	path = mongodb-datamarts
-	url = https://github.com/andresloal/mongodb-datamarts
-	ignore = dirty
-
 [submodule "regulonDB-wdpservice"]
 	path = regulonDB-wdpservice
 	url = https://github.com/galarcon-ccg/regulonDB-wdpservice
