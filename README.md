@@ -20,7 +20,7 @@ git submodule update --recursive
 In order to start the containers use:
 
 ```cmd
-docker-compose build --no-cache
+docker compose build --no-cache
 docker compose start
 ```
 
@@ -29,6 +29,11 @@ Use the following command to stop containers
 docker compose stop
 ```
 
+Or you can use the following command to stop and remove containers
+```cmd
+docker compose down --rmi all -v
+```
+
 # Maintenance
 
-When an updated is obtained by a pull, use the _git submodule update --recursive_ to update submodules in case of this is neccesary.
+When an updated is obtained by a pull, use the _git submodule update --recursive_ to update submodules (just when a new release is pushed).

@@ -17,10 +17,11 @@ RUN mongod --fork --logpath /var/log/mongodb.log --dbpath /data/regulondbdatamar
     && mongorestore /data/dump \
     && mongo admin --eval "db.createUser({user: 'regulondbadmin', pwd: 'regulondb', roles: [{role: 'readWrite', db: 'regulondbdatamarts'}, {role: 'dbAdmin', db: 'regulondbdatamarts'}, {role: 'readWrite', db: 'regulondbht'}, {role: 'dbAdmin', db: 'regulondbht'}]});" \
     && mongod --dbpath /data/regulondbdatamarts --shutdown \
-    && chown -R mongodb /data/regulondbdatamarts
+    && chown -R mongodb /data/regulondbdatamarts \
+    && rm -rf /data/dump
 
-# Make the new dir a VOLUME to persists it
-VOLUME /data/regulondbdatamarts
+# Make the new dir a VOLUME to persists it (use this only if data gonna change, by default is not neccesary)
+# VOLUME /data/regulondbdatamarts
 
 CMD ["mongod", "--config", "/etc/mongodb.conf"]
 
